@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>인스타 통합 운영</title>
+<style>
+:root{
+  --bg:#12100E; --panel:#1C1916; --panel2:#211D19; --line:#302A24;
+  --tx:#EDE7DE; --mut:#9C9186; --dim:#6E6459;
+  --wjm:#D8F34E; --off:#D48A9D;
+  --ok:#7FD98A; --warn:#F2C265; --bad:#F08A7A;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:"Pretendard","Noto Sans KR","Apple SD Gothic Neo",sans-serif;font-size:15px;line-height:1.55;padding:28px 20px 60px}
+.wrap{max-width:1060px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+h1{font-size:21px;font-weight:700;letter-spacing:-.01em}
+h1 .sub{color:var(--dim);font-weight:400;font-size:13px;margin-left:10px}
+.asof{color:var(--mut);font-size:12.5px;font-variant-numeric:tabular-nums}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:840px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 20px 16px}
+.chead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.cname{font-size:16.5px;font-weight:700}
+.cname a{color:inherit;text-decoration:none}
+.cname .at{font-size:12.5px;color:var(--mut);font-weight:400;margin-left:6px}
+.card.wjm .cname .tick{color:var(--wjm)} .card.off .cname .tick{color:var(--off)}
+.days{display:flex;gap:5px}
+.day{font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:20px;padding:2px 8px}
+.day.on{color:var(--tx);border-color:var(--mut)}
+.card.wjm .day.today{outline:1.5px solid var(--wjm);color:var(--wjm)}
+.card.off .day.today{outline:1.5px solid var(--off);color:var(--off)}
+.status{border-radius:10px;padding:12px 14px;margin-bottom:14px;background:var(--panel2);border:1px solid var(--line);font-size:14px}
+.status b{font-weight:700}
+.st-ok b{color:var(--ok)} .st-warn b{color:var(--warn)} .st-bad b{color:var(--bad)}
+.status a{color:inherit}
+.row2{display:flex;gap:16px;align-items:flex-end;margin-bottom:14px}
+.kpi{min-width:110px}
+.kpi .n{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.kpi .d{font-size:12px;color:var(--mut)}
+.kpi .delta{font-size:12.5px;font-variant-numeric:tabular-nums}
+.delta.up{color:var(--ok)} .delta.flat{color:var(--mut)}
+.spark{flex:1;height:46px}
+.spark svg{display:block;width:100%;height:46px}
+.sec{font-size:12px;color:var(--dim);letter-spacing:.08em;margin:14px 0 6px}
+ul.posts,ul.queue{list-style:none}
+ul.posts li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px}
+ul.posts li a{color:var(--tx);text-decoration:none}
+ul.posts li a:hover{text-decoration:underline}
+ul.posts .m{color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}
+ul.queue li{padding:6px 0;border-top:1px solid var(--line);font-size:13.5px;color:var(--mut);display:flex;gap:8px}
+ul.queue .no{color:var(--dim);font-variant-numeric:tabular-nums;min-width:64px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn{font-size:12.5px;color:var(--tx);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:6px 11px;background:var(--panel2)}
+.btn:hover{border-color:var(--mut)}
+.card.wjm .btn.hot{border-color:var(--wjm);color:var(--wjm)}
+.card.off .btn.hot{border-color:var(--off);color:var(--off)}
+.empty{color:var(--dim);font-size:13px;padding:8px 0}
+footer{margin-top:26px;color:var(--dim);font-size:12px;text-align:center}
+.err{color:var(--bad);font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>인스타 통합 운영<span class="sub">원장님몰래 · 마드모아젤 공식</span></h1>
+  <div class="asof" id="asof">불러오는 중…</div>
+</header>
+<div class="grid">
+  <section class="card wjm" id="card-wjm">
+    <div class="chead">
+      <div class="cname"><span class="tick">●</span> <a href="https://www.instagram.com/wonjang.mollae/" target="_blank">원장님몰래</a><span class="at">@wonjang.mollae · 무인 발행</span></div>
+      <div class="days" id="days-wjm"></div>
+    </div>
+    <div class="status" id="st-wjm">확인 중…</div>
+    <div class="row2">
+      <div class="kpi"><div class="n" id="fo-wjm">–</div><div class="d">팔로워 <span class="delta" id="de-wjm"></span></div></div>
+      <div class="spark" id="sp-wjm"></div>
+    </div>
+    <div class="sec">최근 게시물</div><ul class="posts" id="po-wjm"></ul>
+    <div class="sec">주제 큐</div><ul class="queue" id="qu-wjm"></ul>
+    <div class="btns">
+      <a class="btn hot" target="_blank" href="https://github.com/wonjang-mollae/wonjang-mollae.github.io/issues/new?labels=topic-request&title=%EC%A3%BC%EC%A0%9C+%EC%B6%94%EA%B0%80&body=%EC%8B%9C%EB%A6%AC%EC%A6%88%3A%20%0A%EC%A3%BC%EC%A0%9C%3A%20%0A%EB%A9%94%EB%AA%A8%3A%20">＋ 주제 추가</a>
+      <a class="btn" target="_blank" href="https://github.com/wonjang-mollae/wonjang-mollae.github.io/actions">실행 로그</a>
+      <a class="btn" target="_blank" href="https://wonjang-mollae.github.io/dash-k7x2.html">채널 상세</a>
+    </div>
+  </section>
+
+  <section class="card off" id="card-off">
+    <div class="chead">
+      <div class="cname"><span class="tick">●</span> <a href="https://www.instagram.com/mademoiselle.hair_official/" target="_blank">마드모아젤 공식</a><span class="at">@mademoiselle.hair_official · 승인 발행</span></div>
+      <div class="days" id="days-off"></div>
+    </div>
+    <div class="status" id="st-off">확인 중…</div>
+    <div class="row2">
+      <div class="kpi"><div class="n" id="fo-off">–</div><div class="d">팔로워 <span class="delta" id="de-off"></span></div></div>
+      <div class="spark" id="sp-off"></div>
+    </div>
+    <div class="sec">최근 게시물</div><ul class="posts" id="po-off"></ul>
+    <div class="sec">주제 큐</div><ul class="queue" id="qu-off"></ul>
+    <div class="btns">
+      <a class="btn hot" id="approve-off" target="_blank" href="https://github.com/wonjang-mollae/mademoiselle-official/issues?q=is%3Aissue+is%3Aopen+label%3Apublish-queue">승인 이슈</a>
+      <a class="btn" target="_blank" href="https://github.com/wonjang-mollae/mademoiselle-official/issues/new?labels=topic-request&title=%EC%A3%BC%EC%A0%9C+%EC%B6%94%EA%B0%80&body=%EC%8B%9C%EB%A6%AC%EC%A6%88%3A%20%0A%EC%A3%BC%EC%A0%9C%3A%20%0A%EB%A9%94%EB%AA%A8%3A%20">＋ 주제 추가</a>
+      <a class="btn" target="_blank" href="https://github.com/wonjang-mollae/mademoiselle-official/actions">실행 로그</a>
+    </div>
+  </section>
+</div>
+<footer>제작: 코덱스(공식 콘텐츠) · 운영보고: Claude · 승인: 대표 — 비공개 운용 페이지</footer>
+</div>
+<script>
+const CH = {
+  wjm: { repo:'wonjang-mollae/wonjang-mollae.github.io', days:[1,2,3,4,5], accent:'#D8F34E' },
+  off: { repo:'wonjang-mollae/mademoiselle-official',    days:[2,5],       accent:'#D48A9D' },
+};
+const RAW = r => `https://raw.githubusercontent.com/${r}/main`;
+const bust = () => `?t=${Math.random().toString(36).slice(2)}`;
+const kst = () => new Date(Date.now() + 9*3600*1000);
+const today = () => kst().toISOString().slice(0,10);
+const $ = id => document.getElementById(id);
+const DAYN = ['일','월','화','수','목','금','토'];
+
+async function jget(url){ const r = await fetch(url); if(!r.ok) throw new Error(r.status); return r.json(); }
+async function tget(url){ const r = await fetch(url); if(!r.ok) throw new Error(r.status); return (await r.text()).trim(); }
+
+function pills(key){
+  const el = $('days-'+key); const dow = kst().getUTCDay();
+  el.innerHTML = [1,2,3,4,5].map(d=>{
+    const on = CH[key].days.includes(d);
+    return `<span class="day${on?' on':''}${on&&d===dow?' today':''}">${DAYN[d]}</span>`;
+  }).join('');
+}
+
+function spark(key, pts){
+  const el = $('sp-'+key);
+  if(pts.length < 2){ el.innerHTML = '<div class="empty">추이 수집 대기</div>'; return; }
+  const w=300,h=46,p=3, min=Math.min(...pts), max=Math.max(...pts), rg=(max-min)||1;
+  const xy = pts.map((v,i)=>[p+i*(w-2*p)/(pts.length-1), h-p-(v-min)*(h-2*p)/rg]);
+  const d = xy.map((c,i)=>(i?'L':'M')+c[0].toFixed(1)+' '+c[1].toFixed(1)).join(' ');
+  const last = xy[xy.length-1];
+  el.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-label="팔로워 추이">
+    <path d="${d}" fill="none" stroke="${CH[key].accent}" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="3" fill="${CH[key].accent}"/></svg>`;
+}
+
+function renderStats(key, stats){
+  const snaps = (stats.snapshots||[]).filter(s=>s.followers!=null);
+  if(!snaps.length){ $('fo-'+key).textContent='–'; spark(key,[]); $('po-'+key).innerHTML='<li class="empty" style="border:0">지표 수집 대기 (매일 21:07 자동)</li>'; return; }
+  const cur = snaps[snaps.length-1];
+  $('fo-'+key).textContent = cur.followers.toLocaleString();
+  const wk = snaps.filter(s=>Date.now()-new Date(s.at)<7*864e5);
+  const diff = wk.length>1 ? cur.followers-wk[0].followers : 0;
+  const de = $('de-'+key);
+  de.textContent = diff>0?`+${diff} (7일)`:(diff<0?`${diff} (7일)`:'±0 (7일)');
+  de.className = 'delta '+(diff>0?'up':'flat');
+  spark(key, snaps.slice(-30).map(s=>s.followers));
+  const media = (cur.media||[]).slice(0,3);
+  $('po-'+key).innerHTML = media.length ? media.map(m=>{
+    const d = (m.ts||'').slice(5,10).replace('-','/');
+    const t = m.type==='VIDEO'?'릴스':'카드';
+    return `<li><a href="${m.permalink}" target="_blank">${d} · ${t}</a><span class="m">♥ ${m.likes??'–'} · 💬 ${m.comments??'–'}</span></li>`;
+  }).join('') : '<li class="empty" style="border:0">게시물 없음</li>';
+}
+
+function renderQueue(key, topics){
+  const wait = topics.filter(t=>t.status==='대기');
+  $('qu-'+key).innerHTML = wait.length
+    ? wait.slice(0,3).map(t=>`<li><span class="no">${t.series} ${t.issueNo}</span>${t.topic}</li>`).join('')
+      + (wait.length>3?`<li><span class="no"></span>… 외 ${wait.length-3}건 대기</li>`:'')
+    : '<li class="empty" style="border:0">대기 주제 없음 — 보충 필요</li>';
+}
+
+async function status(key){
+  const el = $('st-'+key), c = CH[key];
+  try{
+    const dir = await tget(`${RAW(c.repo)}/.last_post_dir${bust()}`);
+    const isToday = dir === `posts/${today()}`;
+    const postDay = c.days.includes(kst().getUTCDay());
+    let pub = null;
+    try{ pub = await jget(`${RAW(c.repo)}/${dir}/published.json${bust()}`); }catch(e){}
+    if(pub && isToday){
+      el.className='status st-ok';
+      el.innerHTML=`<b>오늘 게시 완료</b> — <a href="${pub.carousel?.permalink||'#'}" target="_blank">카드</a>${pub.reel?` · <a href="${pub.reel.permalink}" target="_blank">릴스</a>`:''}`;
+    } else if(isToday && !pub){
+      let extra='';
+      if(key==='off'){
+        try{
+          const iss = await jget(`https://api.github.com/repos/${c.repo}/issues?state=open&labels=publish-queue`);
+          if(iss.length){ extra=` — <a href="${iss[0].html_url}" target="_blank"><b>승인 대기 중</b></a>`; $('approve-off').href=iss[0].html_url; }
+        }catch(e){}
+      }
+      el.className='status st-warn';
+      el.innerHTML=`<b>오늘 콘텐츠 생성됨 · 미게시</b>${extra||' — 게시 슬롯 대기 또는 승인 필요'}`;
+    } else if(postDay){
+      el.className='status st-bad';
+      el.innerHTML=`<b>오늘 콘텐츠 미생성</b> — 최근: ${dir.replace('posts/','')}`;
+    } else {
+      const last = pub ? `최근 게시 ${dir.replace('posts/','')}` : `최근 콘텐츠 ${dir.replace('posts/','')}`;
+      el.className='status';
+      el.innerHTML=`오늘은 게시일 아님 · ${last}`;
+    }
+  }catch(e){ el.className='status'; el.innerHTML=`<span class="err">상태 확인 실패 (${e.message})</span>`; }
+}
+
+async function channel(key){
+  const c = CH[key];
+  pills(key);
+  status(key);
+  try{ renderStats(key, await jget(`${RAW(c.repo)}/stats.json${bust()}`)); }
+  catch(e){ $('po-'+key).innerHTML=`<li class="empty" style="border:0">지표 없음</li>`; spark(key,[]); }
+  try{ renderQueue(key, await jget(`${RAW(c.repo)}/topics.json${bust()}`)); }
+  catch(e){ $('qu-'+key).innerHTML=`<li class="empty" style="border:0">큐 확인 실패</li>`; }
+}
+
+(async ()=>{
+  $('asof').textContent = `기준 ${kst().toISOString().slice(0,16).replace('T',' ')} KST`;
+  await Promise.all([channel('wjm'), channel('off')]);
+})();
+</script>
+</body>
+</html>
