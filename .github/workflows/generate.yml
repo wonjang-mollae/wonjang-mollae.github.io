@@ -1,9 +1,12 @@
-name: 콘텐츠 생성 (월~금 07:37/08:13/08:43 KST — 재시도 슬롯)
+name: 콘텐츠 생성 (월~금 07:37/08:13/08:43/09:13/09:53/11:43 KST — 재시도 슬롯)
 on:
   schedule:
     - cron: '37 22 * * 0-4'   # 월~금 07:37 KST (1차)
     - cron: '13 23 * * 0-4'   # 월~금 08:13 KST (2차 — 1차 skip 대비)
     - cron: '43 23 * * 0-4'   # 월~금 08:43 KST (3차)
+    - cron: '13 0 * * 1-5'    # 월~금 09:13 KST (4차 — 크론 지연·미발화 대비)
+    - cron: '53 0 * * 1-5'    # 월~금 09:53 KST (5차)
+    - cron: '43 2 * * 1-5'    # 월~금 11:43 KST (6차 — 최종, 12:43 게시 슬롯 전)
   workflow_dispatch: {}
 
 permissions:
@@ -75,7 +78,9 @@ jobs:
             });
 
   # GitHub 크론 미발화 대비: 생성 워크플로우가 직접 10:07 KST까지 대기 후 게시를 트리거
+  # 2026-09-28: generate 완료 뒤에만 실행(needs) — 콘텐츠 커밋 전에 게시가 먼저 돌아 헛돌던 문제 방지
   trigger-publish:
+    needs: generate
     runs-on: ubuntu-latest
     permissions:
       actions: write
