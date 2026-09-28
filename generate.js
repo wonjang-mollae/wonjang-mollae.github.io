@@ -31,8 +31,8 @@ const SCHEMA_EXAMPLE = {
   caption: '캡션 본문 + 해시태그 15개 (#원장님몰래 포함)',
 };
 
-async function main() {
-  console.log(`주제: [${todo.series} ${todo.issueNo}] ${todo.topic}`);
+// 2026-09-28: 모델 응답 JSON 깨짐(#141)·API 일시 오류 대비 — 최대 3회 재시도 후 실패 처리
+async function generateOnce() {
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -72,6 +72,26 @@ ${JSON.stringify(SCHEMA_EXAMPLE, null, 2)}
   const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
   const jsonStr = text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1);
   const post = JSON.parse(jsonStr);
+  // 구조 검증: 표지 1 + 본문 ≥1 + CTA 1, 캡션 존재
+  if (!Array.isArray(post.cards) || post.cards.length < 3) throw new Error(`cards 부족(${post.cards && post.cards.length})`);
+  if (post.cards[0].type !== 'cover' || !post.cards[0].headline) throw new Error('표지(cover) 누락');
+  if (!post.cards.some(c => c.type === 'cta')) throw new Error('CTA 카드 누락');
+  if (!post.caption || post.caption.length < 50) throw new Error('caption 누락/짧음');
+  return post;
+}
+
+async function main() {
+  console.log(`주제: [${todo.series} ${todo.issueNo}] ${todo.topic}`);
+  let post, lastErr;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try { post = await generateOnce(); break; }
+    catch (e) {
+      lastErr = e;
+      console.warn(`생성 시도 ${attempt}/3 실패: ${e.message.slice(0, 200)}`);
+      if (attempt < 3) await new Promise(r => setTimeout(r, 20000 * attempt));
+    }
+  }
+  if (!post) throw lastErr;
   post.series = todo.series; post.issueNo = todo.issueNo; post.brand = '원장님{c}몰래{/c}';
 
   fs.mkdirSync(outDir, { recursive: true });
