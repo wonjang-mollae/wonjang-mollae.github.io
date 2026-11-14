@@ -10638,6 +10638,109 @@
           "ts": "2026-11-06T02:49:25+0000"
         }
       ]
+    },
+    {
+      "at": "2026-11-14T17:54:39.308Z",
+      "followers": 174,
+      "media_count": 160,
+      "media": [
+        {
+          "id": "18044546960838588",
+          "type": "VIDEO",
+          "permalink": "https://www.instagram.com/reel/Dfqm0jrDhon/",
+          "likes": 0,
+          "comments": 0,
+          "ts": "2026-11-13T02:55:32+0000"
+        },
+        {
+          "id": "18110816993257552",
+          "type": "CAROUSEL_ALBUM",
+          "permalink": "https://www.instagram.com/p/Dfqmv4tjKec/",
+          "likes": 1,
+          "comments": 0,
+          "ts": "2026-11-13T02:54:44+0000"
+        },
+        {
+          "id": "18153927136542223",
+          "type": "VIDEO",
+          "permalink": "https://www.instagram.com/reel/DfoIDpBjxCV/",
+          "likes": 0,
+          "comments": 0,
+          "ts": "2026-11-12T03:48:22+0000"
+        },
+        {
+          "id": "18137633815678858",
+          "type": "CAROUSEL_ALBUM",
+          "permalink": "https://www.instagram.com/p/DfoIB-Zkfj8/",
+          "likes": 1,
+          "comments": 0,
+          "ts": "2026-11-12T03:47:49+0000"
+        },
+        {
+          "id": "18103686767551363",
+          "type": "VIDEO",
+          "permalink": "https://www.instagram.com/reel/DflYfugE8k3/",
+          "likes": 0,
+          "comments": 0,
+          "ts": "2026-11-11T02:14:17+0000"
+        },
+        {
+          "id": "18030202274696672",
+          "type": "CAROUSEL_ALBUM",
+          "permalink": "https://www.instagram.com/p/DflYeBNkcvl/",
+          "likes": 1,
+          "comments": 0,
+          "ts": "2026-11-11T02:13:44+0000"
+        },
+        {
+          "id": "18344713012257532",
+          "type": "VIDEO",
+          "permalink": "https://www.instagram.com/reel/DfjDzunj5Ss/",
+          "likes": 0,
+          "comments": 0,
+          "ts": "2026-11-10T04:35:00+0000"
+        },
+        {
+          "id": "18102081599084596",
+          "type": "CAROUSEL_ALBUM",
+          "permalink": "https://www.instagram.com/p/DfjDxE5nE2z/",
+          "likes": 0,
+          "comments": 0,
+          "ts": "2026-11-10T04:34:21+0000"
+        },
+        {
+          "id": "18036669821854461",
+          "type": "VIDEO",
+          "permalink": "https://www.instagram.com/reel/DfgNCgIFEfK/",
+          "likes": 0,
+          "comments": 0,
+          "ts": "2026-11-09T01:57:53+0000"
+        },
+        {
+          "id": "18086187077707488",
+          "type": "CAROUSEL_ALBUM",
+          "permalink": "https://www.instagram.com/p/DfgNBC6DuwX/",
+          "likes": 0,
+          "comments": 0,
+          "ts": "2026-11-09T01:57:27+0000"
+        },
+        {
+          "id": "18110759753250078",
+          "type": "VIDEO",
+          "permalink": "https://www.instagram.com/reel/DfYksZ5gQ4_/",
+          "likes": 0,
+          "comments": 0,
+          "ts": "2026-11-06T02:50:43+0000"
+        },
+        {
+          "id": "18209993692368908",
+          "type": "CAROUSEL_ALBUM",
+          "permalink": "https://www.instagram.com/p/DfYklFGlcB6/",
+          "likes": 0,
+          "comments": 0,
+          "ts": "2026-11-06T02:49:25+0000"
+        }
+      ]
     }
   ]
 }
